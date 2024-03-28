@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CRDDC (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "CRDDC (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
