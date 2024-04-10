@@ -7,8 +7,165 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+        <Border x:Name="AppTitleBar"
+                Background="{StaticResource SystemAccentColorLight3}"
+                VerticalAlignment="Top"
+                Height="32">
+            <StackPanel Orientation="Horizontal"
+                        Margin="16 0 0 0">
+                <Image x:Name="AppFontIcon"
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Center"
+                    Source="Assets/Square44x44Logo.png" 
+                    Width="16" 
+                    Height="16"/>
+                <TextBlock x:Name="AppTitle"
+                    Text="uart"
+                    VerticalAlignment="Center"
+                    Margin="12,0,0,0"
+                    Style="{StaticResource CaptionTextBlockStyle}" />
+            </StackPanel>
+        </Border>
+
+        <Border x:Name="border_image"
+                Grid.Row="1" 
+                BorderThickness="3"
+                BorderBrush="Pink"
+                Background="AliceBlue"
+                Margin="50 30 50 0"
+                CornerRadius="20"
+                Translation="0 0 20"
+                AllowDrop="True"
+                DragEnter="border_image_DragEnter"
+                Drop="border_image_Drop">
+            <Border.Shadow>
+                <ThemeShadow />
+            </Border.Shadow>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <FontIcon Glyph="&#xEE71;" FontSize="128" Foreground="Pink" />
+                <TextBlock Text="请拖入要检测的图片（.jpg）" FontSize="24" Foreground="Pink" Margin="0 30 0 0" HorizontalAlignment="Center" />
+            </StackPanel>
+        </Border>
+        <ToggleButton x:Name="toggleButton_start" 
+                      Grid.Row="2" 
+                      HorizontalAlignment="Center" 
+                      VerticalAlignment="Center" 
+                      CornerRadius="50" 
+                      Height="50" 
+                      Width="50" 
+                      IsEnabled="False" 
+                      Margin="0 0 10 0" 
+                      Click="toggleButton_start_Click">
+            <ToggleButton.Style>
+                <Style TargetType="ToggleButton">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="Foreground" Value="Pink" />
+                    <Setter Property="BorderBrush" Value="Pink" />
+                    <Setter Property="BorderThickness" Value="2" />
+                    <Setter Property="Padding" Value="{ThemeResource ButtonPadding}" />
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                    <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+                    <Setter Property="FocusVisualMargin" Value="-3" />
+                    <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal">
+                                                <Storyboard>
+                                                    <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <revealBrushPresent:Setter Target="RootGrid.(media:RevealBrush.State)" Value="PointerOver" xmlns:revealBrushPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsTypePresent(Microsoft.UI.Xaml.Media.RevealBrush)" />
+                                                    <Setter Target="RootGrid.Background" Value="GhostWhite" />
+                                                    <Setter Target="ContentPresenter.BorderThickness" Value="3" />
+                                                </VisualState.Setters>
+                                                <Storyboard>
+                                                    <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <revealBrushPresent:Setter Target="RootGrid.(media:RevealBrush.State)" Value="Pressed" xmlns:revealBrushPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsTypePresent(Microsoft.UI.Xaml.Media.RevealBrush)" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="LightPink" />
+                                                </VisualState.Setters>
+                                                <Storyboard>
+                                                    <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Disabled">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootGrid.Background" Value="{ThemeResource ToggleButtonRevealBackgroundDisabled}" />
+                                                    <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ToggleButtonRevealBorderBrushDisabled}" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ToggleButtonForegroundDisabled}" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Checked">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootGrid.Background" Value="Pink" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="White" />
+                                                </VisualState.Setters>
+                                                <Storyboard>
+                                                    <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="CheckedPointerOver">
+                                                <VisualState.Setters>
+                                                    <revealBrushPresent:Setter Target="RootGrid.(media:RevealBrush.State)" Value="PointerOver" xmlns:revealBrushPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsTypePresent(Microsoft.UI.Xaml.Media.RevealBrush)" />
+                                                    <Setter Target="RootGrid.Background" Value="LightPink" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="White" />
+                                                    <Setter Target="ContentPresenter.BorderThickness" Value="3" />
+                                                </VisualState.Setters>
+                                                <Storyboard>
+                                                    <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="CheckedPressed">
+                                                <VisualState.Setters>
+                                                    <revealBrushPresent:Setter Target="RootGrid.(media:RevealBrush.State)" Value="Pressed" xmlns:revealBrushPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsTypePresent(Microsoft.UI.Xaml.Media.RevealBrush)" />
+                                                    <Setter Target="RootGrid.Background" Value="Pink" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="GhostWhite" />
+                                                    <Setter Target="ContentPresenter.BorderThickness" Value="2" />
+                                                </VisualState.Setters>
+                                                <Storyboard>
+                                                    <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="CheckedDisabled">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootGrid.Background" Value="{ThemeResource ToggleButtonRevealBackgroundCheckedDisabled}" />
+                                                    <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ToggleButtonRevealBorderBrushCheckedDisabled}" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ToggleButtonForegroundCheckedDisabled}" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                    <ContentPresenter x:Name="ContentPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Foreground="{TemplateBinding Foreground}" CornerRadius="{TemplateBinding CornerRadius}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" ContentTemplate="{TemplateBinding ContentTemplate}" Padding="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" AutomationProperties.AccessibilityView="Raw" />
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ToggleButton.Style>
+            <FontIcon Glyph="&#xE768;" FontSize="24" />
+        </ToggleButton>
+    </Grid>
 </Window>
