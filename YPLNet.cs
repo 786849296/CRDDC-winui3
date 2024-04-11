@@ -31,7 +31,7 @@ namespace CRDDC
         public const int classNum = 4;
         public static readonly string[] classes = ["D00", "D10", "D20", "D30"];
 
-        private static readonly Dictionary<string, Color> classToColor = new() 
+        public static readonly Dictionary<string, Color> class2Color = new() 
         {
             { "D00", Colors.Red },
             { "D10", Colors.Pink },
@@ -94,14 +94,6 @@ namespace CRDDC
                         break;
                     }
             return output.GetRange(0, Math.Min(output.Count, max_det));
-        }
-
-        public Color getBoxColor()
-        {
-            if (classToColor.TryGetValue(className, out Color color))
-                return color;
-            else
-                throw new ArgumentException("Invalid class name.");
         }
     }
 

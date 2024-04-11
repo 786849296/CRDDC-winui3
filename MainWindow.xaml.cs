@@ -97,15 +97,31 @@ namespace CRDDC
                     Canvas.SetZIndex(anchor, 1);
                     anchor.Width = result.x2 - result.x1;
                     anchor.Height = result.y2 - result.y1;
-                    anchor.BorderBrush = new SolidColorBrush(result.getBoxColor());
+                    anchor.BorderBrush = new SolidColorBrush(Anchor.class2Color[result.className]);
                     anchor.BorderThickness = new Thickness(2);
+                    anchor.PointerEntered += (s, e) =>
+                    {
+                        Dictionary<string, string> class2Name = new()
+                        {
+                            { "D00", "◊›œÚ¡—∑Ï" },
+                            { "D10", "∫·œÚ¡—∑Ï" },
+                            { "D20", "ˆ˘”„¡—∑Ï" },
+                            { "D30", "ø”Õ›" }
+                        };
+                        textBlock_conf.Text = $"confidence£∫{result.confidence * 100:f2}%";
+                        textBlock_class.Text = $"class          £∫{class2Name[result.className]}";
+                        textBlock_x1.Text = $"x1              £∫{result.x1 / zoom:f0}";
+                        textBlock_x2.Text = $"x2              £∫{result.x2 / zoom:f0}";
+                        textBlock_y1.Text = $"y1              £∫{result.y1 / zoom:f0}";
+                        textBlock_y2.Text = $"y2              £∫{result.y2 / zoom:f0}";
+                    };
 
                     canvas.Children.Add(new Border());
                     var label = canvas.Children.Last() as Border;
                     Canvas.SetLeft(label, x + result.x1);
                     Canvas.SetTop(label, result.y1 - 20);
                     Canvas.SetZIndex(label, 1);
-                    label.Background = new SolidColorBrush(result.getBoxColor());
+                    label.Background = new SolidColorBrush(Anchor.class2Color[result.className]);
                     label.Child = new TextBlock();
                     (label.Child as TextBlock).Foreground = new SolidColorBrush(Colors.White);
                     (label.Child as TextBlock).Text = $"{result.confidence:f2} {result.className})";

@@ -37,25 +37,56 @@
             </StackPanel>
         </Border>
 
-        <Border x:Name="border_image"
-                Grid.Row="1" 
-                BorderThickness="3"
-                BorderBrush="Pink"
-                Background="AliceBlue"
-                Margin="50 30 50 0"
-                CornerRadius="20"
-                Translation="0 0 20"
-                AllowDrop="True"
-                DragEnter="border_image_DragEnter"
-                Drop="border_image_Drop">
-            <Border.Shadow>
-                <ThemeShadow />
-            </Border.Shadow>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <FontIcon Glyph="&#xEE71;" FontSize="128" Foreground="Pink" />
-                <TextBlock Text="请拖入要检测的图片（.jpg）" FontSize="24" Foreground="Pink" Margin="0 30 0 0" HorizontalAlignment="Center" />
-            </StackPanel>
-        </Border>
+        <Grid Grid.Row="1" Margin="50 30 50 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="border_image"
+                    Grid.Column="0"
+                    BorderThickness="3"
+                    BorderBrush="Pink"
+                    Background="AliceBlue"
+                    Margin="0 0 20 0"
+                    CornerRadius="20"
+                    Translation="0 0 20"
+                    AllowDrop="True"
+                    DragEnter="border_image_DragEnter"
+                    Drop="border_image_Drop">
+                <Border.Shadow>
+                    <ThemeShadow />
+                </Border.Shadow>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <FontIcon Glyph="&#xEE71;" FontSize="128" Foreground="Pink" />
+                    <TextBlock Text="请拖入要检测的图片（.jpg）" FontSize="24" Foreground="Pink" Margin="0 30 0 0" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1"
+                    BorderThickness="3"
+                    BorderBrush="Pink"
+                    CornerRadius="20"
+                    Translation="0 0 20">
+                <Border.Shadow>
+                    <ThemeShadow />
+                </Border.Shadow>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="检测结果(hover锚框)" FontWeight="Bold" FontSize="24" Margin="0 0 0 30" HorizontalAlignment="Center" />
+                    <TextBlock x:Name="textBlock_conf" Text="confidence：" FontSize="16" />
+                    <Border Height="1" Width="250" Margin="0 10 0 15" BorderThickness="2" BorderBrush="Pink" />
+                    <TextBlock x:Name="textBlock_class" Text="class          ：" FontSize="16" />
+                    <Border Height="1" Width="250" Margin="0 10 0 15" BorderThickness="2" BorderBrush="Pink" />
+                    <TextBlock x:Name="textBlock_x1" Text="x1              ：" FontSize="16" />
+                    <Border Height="1" Width="250" Margin="0 10 0 15" BorderThickness="2" BorderBrush="Pink" />
+                    <TextBlock x:Name="textBlock_x2" Text="x2              ：" FontSize="16" />
+                    <Border Height="1" Width="250" Margin="0 10 0 15" BorderThickness="2" BorderBrush="Pink" />
+                    <TextBlock x:Name="textBlock_y1" Text="y1              ：" FontSize="16" />
+                    <Border Height="1" Width="250" Margin="0 10 0 15" BorderThickness="2" BorderBrush="Pink" />
+                    <TextBlock x:Name="textBlock_y2" Text="y2              ：" FontSize="16" />
+                    <Border Height="1" Width="250" Margin="0 10 0 15" BorderThickness="2" BorderBrush="Pink" />
+                </StackPanel>
+            </Border>
+        </Grid>
+        
         <ToggleButton x:Name="toggleButton_start" 
                       Grid.Row="2" 
                       HorizontalAlignment="Center" 
