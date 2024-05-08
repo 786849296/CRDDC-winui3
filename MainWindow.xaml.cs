@@ -9,13 +9,18 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Capture;
+using Windows.Media.Capture.Frames;
+using Windows.Media.MediaProperties;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,6 +34,7 @@ namespace CRDDC
     {
         readonly YPLNet model = new("Assets\\32-1280-140.onnx");
         Images target;
+        MediaCapture mediaCapture;
 
         public MainWindow()
         {
@@ -72,7 +78,10 @@ namespace CRDDC
             image.Source = bitmap;
             for (int i = (border.Child as Canvas).Children.Count - 1; i > 0; i--)
                 (border.Child as Canvas).Children.RemoveAt(i);
+
             toggleButton_start.IsChecked = false;
+            toggleButton_camera.IsChecked = false;
+            mediaCapture.Dispose();
         }
 
         private void toggleButton_start_Click(object sender, RoutedEventArgs e)
@@ -126,6 +135,87 @@ namespace CRDDC
                     (label.Child as TextBlock).Foreground = new SolidColorBrush(Colors.White);
                     (label.Child as TextBlock).Text = $"{result.confidence:f2} {result.className})";
                 }
+            }
+        }
+
+        private async void toggleButton_camera_Click(object sender, RoutedEventArgs e)
+        {
+            toggleButton_start.IsChecked = false;
+            if ((bool)toggleButton_camera.IsChecked)
+            {
+                var groups = await MediaFrameSourceGroup.FindAllAsync();
+                if (groups.Count == 0)
+                {
+                    toggleButton_camera.IsEnabled = false;
+                    Debug.WriteLine("没找到摄像机，你个瓜货");
+                    return;
+                }
+                var mediaFrameSourceGroup = groups[0];
+
+                Debug.WriteLine("摄像机名字: " + mediaFrameSourceGroup.DisplayName);
+                mediaCapture = new MediaCapture();
+                var mediaCaptureInitializationSettings = new MediaCaptureInitializationSettings()
+                {
+                    SourceGroup = mediaFrameSourceGroup,
+                    SharingMode = MediaCaptureSharingMode.SharedReadOnly,
+                    StreamingCaptureMode = StreamingCaptureMode.Video,
+                    MemoryPreference = MediaCaptureMemoryPreference.Cpu
+                };
+                await mediaCapture.InitializeAsync(mediaCaptureInitializationSettings);
+
+                // Set the MediaPlayerElement's Source property to the MediaSource for the mediaCapture.
+                var frameSource = mediaCapture.FrameSources[mediaFrameSourceGroup.SourceInfos[0].Id];
+
+                MediaPlayerElement captureElement = new()
+                {
+                    Stretch = Stretch.Uniform,
+                    AutoPlay = true,
+                };
+                border_image.Child = captureElement;
+                // bing : 尝试在布局更新后再设置 MediaPlayerElement 的源。这可以确保控件已经被添加到布局中，并且有足够的信息来确定其大小。
+                captureElement.Source = Windows.Media.Core.MediaSource.CreateFromMediaFrameSource(frameSource);
+
+                toggleButton_start.IsEnabled = false;
+            }
+            else
+            {
+                // Capture a photo to a stream
+                var imgFormat = ImageEncodingProperties.CreateJpeg();
+                var stream = new InMemoryRandomAccessStream();
+                await mediaCapture.CapturePhotoToStreamAsync(imgFormat, stream);
+                stream.Seek(0);
+
+                // Save the photo to the Pictures folder
+                var file = await KnownFolders.PicturesLibrary.CreateFileAsync("CRDDC.jpg", CreationCollisionOption.GenerateUniqueName);
+                using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                    await RandomAccessStream.CopyAndCloseAsync(stream.GetInputStreamAt(0), fileStream.GetOutputStreamAt(0));
+
+                // Show the photo in an Image element
+                BitmapImage bmpImage = new();
+                await bmpImage.SetSourceAsync(stream);
+                var image = new Image() 
+                { 
+                    Source = bmpImage,
+                    Stretch = Stretch.Uniform,
+                    Width = border_image.ActualWidth,
+                    Height = border_image.ActualHeight
+                };
+
+                target = new(file.Path)
+                {
+                    imageWidth = bmpImage.PixelWidth,
+                    imageHeight = bmpImage.PixelHeight
+                };
+
+                border_image.Child = new Canvas();
+                var canvas = border_image.Child as Canvas;
+                canvas.Children.Add(image);
+                Canvas.SetZIndex(canvas.Children[0], 0);
+                toggleButton_start.IsEnabled = true;
+
+                toggleButton_start.IsChecked = false;
+                mediaCapture.Dispose();
+
             }
         }
     }
